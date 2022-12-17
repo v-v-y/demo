@@ -1,0 +1,41 @@
+<configuration scan="true">
+    <springProperty scope="context" name="application_name" source="spring.application.name"/>
+    <springProperty scope="context" name="json_log_directory_local" source="logging.directory" defaultValue="./logs"/>
+    <springProperty scope="context" name="json_log_directory_remote" source="logging.directory"
+                    defaultValue="/opt/log/${application_name}"/>
+
+    <property name="JSON_LOG_PATH_LOCAL" value="${json_log_directory_local}/${application_name}.log"/>
+    <property name="JSON_LOG_PATH_REMOTE" value="${json_log_directory_remote}/${application_name}.log"/>
+
+    <conversionRule conversionWord="whitespace_exception"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <logger name="org.springframework.ws.client.MessageTracing.sent" level="TRACE"/>
+    <logger name="org.springframework.ws.client.MessageTracing.received" level="TRACE"/>
+    <logger name="org.springframework.jdbc.core" level="DEBUG"/>
+    <logger name="org.zalando.logbook.Logbook" level="TRACE"/>
+    <logger name="brave.Tracer" level="WARN"/>
+
+    <logger name="com.example.demo.GoogleClient" level="TRACE"/>
+
+
+    <appender name="line-stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>utf8</charset>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-70([%thread] %cyan(%-40.40logger{39}) ) [%X{trace_id:-}]  %highlight(%-5level): %message %n%whitespace_exception</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="test | dev">
+        <root level="INFO">
+            <appender-ref ref="line-stdout"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="line-stdout"/>
+        </root>
+    </springProfile>
+
+</configuration>

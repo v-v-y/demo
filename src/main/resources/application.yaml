@@ -1,0 +1,34 @@
+
+spring:
+  application:
+    name: demo-application
+  profiles:
+    active: dev
+  cloud:
+    open-feign:
+      client:
+        config:
+          default:
+            loggerLevel: BASIC
+feign:
+  circuit-breaker:
+    enabled: true
+
+
+resilience4j:
+  scheduled:
+    executor:
+      corePoolSize: 10
+      contextPropagators:
+        - com.example.demo.MdcContextPropagator
+  circuit-breaker:
+    configs:
+      default:
+        slidingWindowType: TIME_BASED
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 3
+        slidingWindowSize: 60
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+        recordFailurePredicate: com.example.demo.ErrorPredicate
+        registerHealthIndicator: true
