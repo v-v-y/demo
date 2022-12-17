@@ -14,7 +14,6 @@ feign:
   circuit-breaker:
     enabled: true
 
-
 resilience4j:
   scheduled:
     executor:
